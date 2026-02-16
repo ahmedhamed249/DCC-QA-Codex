@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Claims QA Command Center</title>
+    <script>
+      tailwind = window.tailwind || {};
+      tailwind.config = {
+        darkMode: 'class',
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: '#eef7ff',
+                100: '#d9ecff',
+                200: '#baddff',
+                300: '#8cc7ff',
+                400: '#57a7ff',
+                500: '#2f85f7',
+                600: '#1f67d8',
+                700: '#1e54af',
+                800: '#1f498d',
+                900: '#203f72'
+              }
+            }
+          }
+        }
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="h-full bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div class="min-h-full">
+      <header class="border-b border-slate-200 bg-white/80 backdrop-blur dark:border-slate-800 dark:bg-slate-900/75">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+          <div class="flex items-center gap-3">
+            <div class="rounded-xl bg-brand-500/10 p-2 text-brand-600 dark:bg-brand-400/20 dark:text-brand-300">
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-600 dark:text-brand-300">QA Command Center</p>
+              <h1 class="text-lg font-bold">Claims Audit Platform</h1>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="themeToggle" class="rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800">
+              <span class="inline-flex items-center gap-2"><i data-lucide="sun-moon" class="h-4 w-4"></i> Theme</span>
+            </button>
+            <button id="logoutBtn" class="hidden rounded-xl border border-slate-300 bg-white px-3 py-2 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50 dark:border-slate-700 dark:bg-slate-900 dark:text-slate-100 dark:hover:bg-slate-800">
+              <span class="inline-flex items-center gap-2"><i data-lucide="log-out" class="h-4 w-4"></i> Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+        <section id="authView" class="mx-auto mt-8 max-w-md rounded-2xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+          <h2 class="mb-1 text-xl font-bold">Login</h2>
+          <p class="mb-5 text-sm text-slate-600 dark:text-slate-300">Sign in with your Firebase credentials. Role is loaded from Firestore user profile.</p>
+          <form id="loginForm" class="space-y-4">
+            <label class="block text-sm font-medium">Email
+              <input required name="email" type="email" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
+            </label>
+            <label class="block text-sm font-medium">Password
+              <input required name="password" type="password" class="mt-1 w-full rounded-xl border border-slate-300 bg-white px-3 py-2 text-slate-900 dark:border-slate-700 dark:bg-slate-950 dark:text-slate-100" />
+            </label>
+            <button class="w-full rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white hover:bg-brand-700">Sign In</button>
+          </form>
+          <p id="authState" class="mt-3 text-sm text-slate-600 dark:text-slate-300"></p>
+        </section>
+
+        <section id="appView" class="hidden space-y-6">
+          <div class="grid gap-4 rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900 lg:grid-cols-3">
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Signed in as</p>
+              <p id="userLabel" class="text-lg font-semibold"></p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Role</p>
+              <p id="roleLabel" class="text-lg font-semibold"></p>
+            </div>
+            <div>
+              <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Firebase</p>
+              <p id="firebaseStatus" class="text-lg font-semibold"></p>
+            </div>
+          </div>
+
+          <section id="adminView" class="hidden space-y-6">
+            <div class="grid gap-4 lg:grid-cols-3">
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Average Score</p>
+                <p id="avgScore" class="mt-2 text-3xl font-bold">0%</p>
+              </article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Pass Rate</p>
+                <p id="passRate" class="mt-2 text-3xl font-bold">0%</p>
+              </article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">Total Audits</p>
+                <p id="totalAudits" class="mt-2 text-3xl font-bold">0</p>
+              </article>
+            </div>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-lg font-bold">Scorecard Template</h3>
+                <button id="editScorecardBtn" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold dark:border-slate-700">Edit Scorecard</button>
+              </div>
+              <div id="scorecardTemplateWrap" class="space-y-3"></div>
+              <div id="scorecardEditActions" class="mt-4 hidden gap-2">
+                <button id="saveScorecardBtn" class="rounded-xl bg-brand-600 px-3 py-2 text-sm font-semibold text-white">Save Template</button>
+                <button id="cancelScorecardBtn" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold dark:border-slate-700">Cancel</button>
+              </div>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 class="mb-4 text-lg font-bold">Create / Edit Audit</h3>
+              <form id="auditForm" class="space-y-4">
+                <input type="hidden" name="auditId" />
+                <div class="grid gap-3 md:grid-cols-3">
+                  <label class="text-sm font-medium">Claim Ref
+                    <input required name="claimRef" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                  <label class="text-sm font-medium">Date
+                    <input required type="date" name="auditDate" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                  <label class="text-sm font-medium">Claim Status
+                    <select required name="claimStatus" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950">
+                      <option value="">Select</option>
+                      <option>Open</option>
+                      <option>Closed</option>
+                    </select>
+                  </label>
+                  <label class="text-sm font-medium">Handler Name
+                    <input required name="handlerName" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                </div>
+                <div id="auditAttributesWrap" class="space-y-4"></div>
+                <label class="text-sm font-medium">Overall Auditor Summary
+                  <textarea name="overallComments" rows="5" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"></textarea>
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button class="rounded-xl bg-brand-600 px-4 py-2 font-semibold text-white">Save Audit</button>
+                  <button id="cancelEditAuditBtn" type="button" class="hidden rounded-xl border border-slate-300 px-4 py-2 font-semibold dark:border-slate-700">Cancel Edit</button>
+                  <p id="auditSaveState" class="self-center text-sm text-slate-600 dark:text-slate-300"></p>
+                </div>
+              </form>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <div class="mb-3 flex flex-wrap items-center gap-3">
+                <h3 class="text-lg font-bold">Audit Performance Explorer</h3>
+                <label class="text-sm">Handler
+                  <input id="adminFilterHandler" placeholder="All handlers" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <label class="text-sm">From
+                  <input id="adminFilterFrom" type="date" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <label class="text-sm">To
+                  <input id="adminFilterTo" type="date" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <button id="applyAdminFilters" class="rounded-xl border border-slate-300 px-3 py-2 text-sm font-semibold dark:border-slate-700">Apply</button>
+              </div>
+              <div id="trendWrap" class="mb-4"></div>
+              <div id="adminAuditTableWrap" class="overflow-auto"></div>
+            </section>
+          </section>
+
+          <section id="handlerView" class="hidden space-y-6">
+            <div class="grid gap-4 lg:grid-cols-3">
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">My Avg Score</p>
+                <p id="handlerAvgScore" class="mt-2 text-3xl font-bold">0%</p>
+              </article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">My Pass Rate</p>
+                <p id="handlerPassRate" class="mt-2 text-3xl font-bold">0%</p>
+              </article>
+              <article class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+                <p class="text-xs uppercase tracking-[0.16em] text-slate-500">My Audits</p>
+                <p id="handlerTotalAudits" class="mt-2 text-3xl font-bold">0</p>
+              </article>
+            </div>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 class="mb-3 text-lg font-bold">My Performance Trend</h3>
+              <div id="handlerTrendWrap"></div>
+            </section>
+
+            <section class="rounded-2xl border border-slate-200 bg-white p-4 shadow-sm dark:border-slate-800 dark:bg-slate-900">
+              <h3 class="mb-3 text-lg font-bold">My Audit Results</h3>
+              <div id="handlerAuditList" class="space-y-3"></div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
