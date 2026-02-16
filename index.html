@@ -1,0 +1,210 @@
+<!doctype html>
+<html lang="en" class="h-full">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>DCC Claims Handling Quality Assurance</title>
+    <script>
+      tailwind = window.tailwind || {};
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              brand: {
+                50: "#edf6ff",
+                100: "#d9ebff",
+                200: "#b7daff",
+                300: "#87c2ff",
+                400: "#4a9eff",
+                500: "#1f7deb",
+                600: "#1764c4",
+                700: "#16529d",
+                800: "#16457f",
+                900: "#173d6a",
+              },
+              accent: {
+                500: "#14b8a6",
+                600: "#0d9488",
+              },
+            },
+            boxShadow: {
+              soft: "0 18px 45px -25px rgba(23, 61, 106, 0.65)",
+            },
+          },
+        },
+      };
+    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body class="h-full bg-slate-100 text-slate-900 dark:bg-slate-950 dark:text-slate-100">
+    <div class="bg-orb bg-orb-one"></div>
+    <div class="bg-orb bg-orb-two"></div>
+
+    <div class="relative min-h-full">
+      <header class="glass-panel border-b border-white/40 dark:border-slate-800/80">
+        <div class="mx-auto flex max-w-7xl items-center justify-between px-4 py-4 lg:px-8">
+          <div class="flex items-center gap-3">
+            <div class="rounded-xl bg-brand-500/15 p-2 text-brand-700 dark:bg-brand-400/20 dark:text-brand-200">
+              <i data-lucide="shield-check" class="h-5 w-5"></i>
+            </div>
+            <div>
+              <p class="text-xs font-semibold uppercase tracking-[0.18em] text-brand-700 dark:text-brand-200">Disaster Care Capital</p>
+              <h1 class="text-lg font-extrabold tracking-tight">Claims Handling Quality Assurance</h1>
+            </div>
+          </div>
+
+          <div class="flex items-center gap-2">
+            <button id="themeToggle" class="btn btn-secondary" type="button">
+              <span class="inline-flex items-center gap-2"><i data-lucide="sun-moon" class="h-4 w-4"></i> Theme</span>
+            </button>
+            <button id="logoutBtn" class="btn btn-secondary hidden" type="button">
+              <span class="inline-flex items-center gap-2"><i data-lucide="log-out" class="h-4 w-4"></i> Logout</span>
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <main class="mx-auto max-w-7xl px-4 py-6 lg:px-8">
+        <section id="authView" class="glass-card auth-card mx-auto mt-8 max-w-lg p-6">
+          <div class="mb-4 flex items-start justify-between gap-3">
+            <div>
+              <p class="mb-2 inline-flex rounded-full bg-brand-500/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-brand-700 dark:text-brand-200">Secure access</p>
+              <h2 id="authModeLabel" class="mb-1 text-2xl font-extrabold">Welcome back</h2>
+              <p id="authModeHint" class="text-sm text-slate-600 dark:text-slate-300">Sign in with your work email to access your QA dashboard.</p>
+            </div>
+            <span id="firebaseModePill" class="rounded-full border border-brand-200 bg-brand-50 px-3 py-1 text-xs font-semibold text-brand-700 dark:border-brand-900 dark:bg-brand-900/30 dark:text-brand-200">Mode</span>
+          </div>
+
+          <form id="loginForm" class="space-y-4">
+            <label id="authNameWrap" class="hidden block text-sm font-semibold">Full Name
+              <input name="displayName" type="text" placeholder="Jane Doe" class="mt-1 w-full rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-slate-900 outline-none ring-brand-300 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100" />
+            </label>
+            <label class="block text-sm font-semibold">Work Email
+              <input required name="email" type="email" placeholder="you@disastercarecapital.co.uk" class="mt-1 w-full rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-slate-900 outline-none ring-brand-300 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100" />
+            </label>
+            <label class="block text-sm font-semibold">Password
+              <input required name="password" type="password" placeholder="At least 6 characters" class="mt-1 w-full rounded-xl border border-slate-300 bg-white/80 px-3 py-2 text-slate-900 outline-none ring-brand-300 transition focus:ring-2 dark:border-slate-700 dark:bg-slate-950/80 dark:text-slate-100" />
+            </label>
+            <div class="flex flex-wrap gap-2">
+              <button id="authActionBtn" class="btn btn-primary flex-1" type="submit">Sign In</button>
+              <button id="authToggleBtn" class="btn btn-secondary flex-1" type="button">New here? Create an account</button>
+            </div>
+          </form>
+          <p id="authState" class="mt-3 min-h-5 text-sm text-slate-700 dark:text-slate-300"></p>
+        </section>
+
+        <section id="appView" class="hidden space-y-6">
+          <div class="glass-card grid gap-4 p-4 lg:grid-cols-3">
+            <div>
+              <p class="stat-label">Signed in as</p>
+              <p id="userLabel" class="text-lg font-extrabold"></p>
+            </div>
+            <div>
+              <p class="stat-label">Role</p>
+              <p id="roleLabel" class="text-lg font-extrabold"></p>
+            </div>
+            <div>
+              <p class="stat-label">Firebase</p>
+              <p id="firebaseStatus" class="text-lg font-extrabold"></p>
+            </div>
+          </div>
+
+          <section id="adminView" class="hidden space-y-6">
+            <div class="grid gap-4 lg:grid-cols-3">
+              <article class="glass-card p-4"><p class="stat-label">Average Score</p><p id="avgScore" class="mt-2 text-3xl font-black">0%</p></article>
+              <article class="glass-card p-4"><p class="stat-label">Pass Rate</p><p id="passRate" class="mt-2 text-3xl font-black">0%</p></article>
+              <article class="glass-card p-4"><p class="stat-label">Total Audits</p><p id="totalAudits" class="mt-2 text-3xl font-black">0</p></article>
+            </div>
+
+            <section class="glass-card p-4">
+              <div class="mb-4 flex flex-wrap items-center justify-between gap-3">
+                <h3 class="text-lg font-extrabold">Scorecard Template</h3>
+                <button id="editScorecardBtn" class="btn btn-secondary" type="button">Edit Scorecard</button>
+              </div>
+              <div id="scorecardTemplateWrap" class="space-y-3"></div>
+              <div id="scorecardEditActions" class="mt-4 hidden gap-2">
+                <button id="saveScorecardBtn" class="btn btn-primary" type="button">Save Template</button>
+                <button id="cancelScorecardBtn" class="btn btn-secondary" type="button">Cancel</button>
+              </div>
+            </section>
+
+            <section class="glass-card p-4">
+              <h3 class="mb-4 text-lg font-extrabold">Create / Edit Audit</h3>
+              <form id="auditForm" class="space-y-4">
+                <input type="hidden" name="auditId" />
+                <div class="grid gap-3 md:grid-cols-3">
+                  <label class="text-sm font-semibold">Claim Ref
+                    <input required name="claimRef" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                  <label class="text-sm font-semibold">Date
+                    <input required type="date" name="auditDate" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                  <label class="text-sm font-semibold">Claim Status
+                    <select required name="claimStatus" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950">
+                      <option value="">Select</option>
+                      <option>Open</option>
+                      <option>Closed</option>
+                    </select>
+                  </label>
+                  <label class="text-sm font-semibold">Handler Name
+                    <input required name="handlerName" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950" />
+                  </label>
+                </div>
+                <div id="auditAttributesWrap" class="space-y-4"></div>
+                <label class="text-sm font-semibold">Overall Auditor Summary
+                  <textarea name="overallComments" rows="5" class="mt-1 w-full rounded-xl border border-slate-300 px-3 py-2 dark:border-slate-700 dark:bg-slate-950"></textarea>
+                </label>
+                <div class="flex flex-wrap gap-2">
+                  <button class="btn btn-primary">Save Audit</button>
+                  <button id="cancelEditAuditBtn" type="button" class="btn btn-secondary hidden">Cancel Edit</button>
+                  <p id="auditSaveState" class="self-center text-sm text-slate-700 dark:text-slate-300"></p>
+                </div>
+              </form>
+            </section>
+
+            <section class="glass-card p-4">
+              <div class="mb-3 flex flex-wrap items-center gap-3">
+                <h3 class="text-lg font-extrabold">Audit Performance Explorer</h3>
+                <label class="text-sm font-semibold">Handler
+                  <input id="adminFilterHandler" placeholder="All handlers" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <label class="text-sm font-semibold">From
+                  <input id="adminFilterFrom" type="date" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <label class="text-sm font-semibold">To
+                  <input id="adminFilterTo" type="date" class="ml-2 rounded-lg border border-slate-300 px-2 py-1 dark:border-slate-700 dark:bg-slate-950" />
+                </label>
+                <button id="applyAdminFilters" class="btn btn-secondary" type="button">Apply</button>
+              </div>
+              <div id="trendWrap" class="mb-4"></div>
+              <div id="adminAuditTableWrap" class="overflow-auto"></div>
+            </section>
+          </section>
+
+          <section id="handlerView" class="hidden space-y-6">
+            <div class="grid gap-4 lg:grid-cols-3">
+              <article class="glass-card p-4"><p class="stat-label">My Avg Score</p><p id="handlerAvgScore" class="mt-2 text-3xl font-black">0%</p></article>
+              <article class="glass-card p-4"><p class="stat-label">My Pass Rate</p><p id="handlerPassRate" class="mt-2 text-3xl font-black">0%</p></article>
+              <article class="glass-card p-4"><p class="stat-label">My Audits</p><p id="handlerTotalAudits" class="mt-2 text-3xl font-black">0</p></article>
+            </div>
+
+            <section class="glass-card p-4">
+              <h3 class="mb-3 text-lg font-extrabold">My Performance Trend</h3>
+              <div id="handlerTrendWrap"></div>
+            </section>
+
+            <section class="glass-card p-4">
+              <h3 class="mb-3 text-lg font-extrabold">My Audit Results</h3>
+              <div id="handlerAuditList" class="space-y-3"></div>
+            </section>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script type="module" src="app.js"></script>
+  </body>
+</html>
